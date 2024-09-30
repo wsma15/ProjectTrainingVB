@@ -15,31 +15,26 @@ Public Class Dashboard
             BindUsersGridView()
             BindRolesGridView()
         End If
-
-
     End Sub
+
     Protected Sub UsersbtnExportPDF_Click(sender As Object, e As EventArgs)
         Dim dataTable As DataTable = GetUsersDataFromProcedure()
         If dataTable Is Nothing OrElse dataTable.Rows.Count = 0 Then
             System.Diagnostics.Debug.WriteLine("The DataTable is empty. No data returned from the procedure.")
             Return ' Exit if there's no data
         End If
-
         For Each row As DataRow In dataTable.Rows
             System.Diagnostics.Debug.WriteLine("Row: " & row("username").ToString() & ", " & row("roleid").ToString())
         Next
-
         Dim rptDoc As New ReportDocument()
         Dim reportPath As String = Server.MapPath("~/UsersReport.rpt")
         rptDoc.Load(reportPath)
         rptDoc.SetDataSource(dataTable)
-
         Dim directoryPath As String = Server.MapPath("~/Reports")
         Dim filePath As String = Path.Combine(directoryPath, "UsersReport.pdf")
         If Not Directory.Exists(directoryPath) Then
             Directory.CreateDirectory(directoryPath)
         End If
-
         Dim exportOptions As New ExportOptions()
         Dim diskOptions As New DiskFileDestinationOptions()
         Dim pdfOptions As New PdfRtfWordFormatOptions()
@@ -48,13 +43,11 @@ Public Class Dashboard
         exportOptions.ExportFormatType = ExportFormatType.PortableDocFormat
         exportOptions.DestinationOptions = diskOptions
         exportOptions.FormatOptions = pdfOptions
-
         Try
             rptDoc.Export(exportOptions)
         Catch ex As Exception
             Throw New Exception("An error occurred while exporting the report.", ex)
         End Try
-
         Dim file As New FileInfo(filePath)
         If file.Exists Then
             Response.Clear()
@@ -69,45 +62,28 @@ Public Class Dashboard
 
     Protected Sub RolesbtnExportPDF_Click(sender As Object, e As EventArgs)
         Dim dataTable As DataTable = GetRolesDataFromProcedure()
-
         Dim rptDoc As New ReportDocument()
-
         Dim reportPath As String = Server.MapPath("~/RolesReport.rpt")
-
         rptDoc.Load(reportPath)
-
         rptDoc.SetDataSource(dataTable)
-
         Dim directoryPath As String = Server.MapPath("~/Reports")
-
         Dim filePath As String = Path.Combine(directoryPath, "RolesReport.pdf")
-
         If Not Directory.Exists(directoryPath) Then
             Directory.CreateDirectory(directoryPath)
         End If
-
         Dim exportOptions As New ExportOptions()
-
         Dim diskOptions As New DiskFileDestinationOptions()
-
         Dim pdfOptions As New PdfRtfWordFormatOptions()
-
         diskOptions.DiskFileName = filePath
-
         exportOptions.ExportDestinationType = ExportDestinationType.DiskFile
-
         exportOptions.ExportFormatType = ExportFormatType.PortableDocFormat
-
         exportOptions.DestinationOptions = diskOptions
-
         exportOptions.FormatOptions = pdfOptions
-
         Try
             rptDoc.Export(exportOptions)
         Catch ex As Exception
             Throw New Exception("An error occurred while exporting the report.", ex)
         End Try
-
         Dim file As New FileInfo(filePath)
         If file.Exists Then
             Response.Clear()
@@ -294,11 +270,9 @@ Public Class Dashboard
             e.Cancel = True
             UsersGridView.CancelEdit()
         End If
-
         Dim rptdoc As New ReportDocument()
         rptdoc.Load(Server.MapPath("~/UsersReport.rpt"))
         Dim query As String = "SELECT Username, Password, RoleId FROM [dbo].[Users]"
-
         Using conn As New SqlConnection(connectionString)
             Dim cmd As New SqlCommand(query, conn)
             Dim da As New SqlDataAdapter(cmd)
@@ -306,13 +280,11 @@ Public Class Dashboard
             conn.Open()
             da.Fill(dt)
             conn.Close()
-
             For Each row As DataRow In dt.Rows
                 Dim encryptedPassword As String = row("Password").ToString()
                 Dim decryptedPassword As String = PasswordHelper.Decrypt(encryptedPassword)
                 row("Password") = decryptedPassword
             Next
-
             Session("UsersDs") = dt
         End Using
     End Sub
@@ -322,25 +294,20 @@ Public Class Dashboard
         Dim password As String = e.NewValues("Password").ToString()
         Dim RoleId As Integer = Convert.ToInt32(e.NewValues("RoleId"))
         Dim query As String = "UPDATE [dbo].[Users] SET Password = @Password, RoleId = @RoleId WHERE Username = @Username"
-
         Using conn As New SqlConnection(connectionString)
             Dim cmd As New SqlCommand(query, conn)
             cmd.Parameters.AddWithValue("@Username", username)
             cmd.Parameters.AddWithValue("@Password", PasswordHelper.HashPassword(password))
             cmd.Parameters.AddWithValue("@RoleId", RoleId)
-
             conn.Open()
             cmd.ExecuteNonQuery()
             conn.Close()
         End Using
-
         e.Cancel = True
         UsersGridView.CancelEdit()
-
         Dim rptdoc As New ReportDocument()
         rptdoc.Load(Server.MapPath("~/UsersReport.rpt"))
         query = "SELECT Username, Password, RoleId FROM [dbo].[Users]"
-
         Using conn As New SqlConnection(connectionString)
             Dim cmd As New SqlCommand(query, conn)
             Dim da As New SqlDataAdapter(cmd)
@@ -348,13 +315,11 @@ Public Class Dashboard
             conn.Open()
             da.Fill(dt)
             conn.Close()
-
             For Each row As DataRow In dt.Rows
                 Dim encryptedPassword As String = row("Password").ToString()
                 Dim decryptedPassword As String = PasswordHelper.Decrypt(encryptedPassword)
                 row("Password") = decryptedPassword
             Next
-
             Session("UsersDs") = dt
         End Using
     End Sub
@@ -365,37 +330,29 @@ Public Class Dashboard
             If dataRow Is Nothing Then Continue For
             If e.NewValues(dataRow.FieldName) Is Nothing Then e.Errors(dataRow) = "Value cannot be null."
         Next
-
         If e.NewValues("Username") IsNot Nothing AndAlso Not IsValidUsername(e.NewValues("Username").ToString()) Then
             e.Errors(CType(UsersGridView.Columns("Username"), GridViewDataColumn)) = "The input must be at least 6 characters long, only contain letters and numbers, and have no special characters."
         End If
-
         If e.NewValues("Password") IsNot Nothing AndAlso Not IsValidPassword(e.NewValues("Password").ToString()) Then
             e.Errors(CType(UsersGridView.Columns("Password"), GridViewDataColumn)) = "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one digit, and one special character."
         End If
-
         If e.Errors.Count > 0 Then e.RowError = "Please fill in all fields."
     End Sub
 
     Protected Sub UsersGridView_RowDeleting(ByVal sender As Object, ByVal e As DevExpress.Web.Data.ASPxDataDeletingEventArgs)
         Dim username As String = e.Keys("Username").ToString()
         Dim query As String = "DELETE FROM [dbo].[Users] WHERE Username = @Username"
-
         Using conn As New SqlConnection(connectionString)
             Dim cmd As New SqlCommand(query, conn)
             cmd.Parameters.AddWithValue("@Username", username)
-
             conn.Open()
             cmd.ExecuteNonQuery()
             conn.Close()
         End Using
-
         e.Cancel = True
-
         Dim rptdoc As New ReportDocument()
         rptdoc.Load(Server.MapPath("~/UsersReport.rpt"))
         query = "SELECT Username, Password, RoleId FROM [dbo].[Users]"
-
         Using conn As New SqlConnection(connectionString)
             Dim cmd As New SqlCommand(query, conn)
             Dim da As New SqlDataAdapter(cmd)
@@ -403,16 +360,15 @@ Public Class Dashboard
             conn.Open()
             da.Fill(dt)
             conn.Close()
-
             For Each row As DataRow In dt.Rows
                 Dim encryptedPassword As String = row("Password").ToString()
                 Dim decryptedPassword As String = PasswordHelper.Decrypt(encryptedPassword)
                 row("Password") = decryptedPassword
             Next
-
             Session("UsersDs") = dt
         End Using
     End Sub
+
     Protected Sub RolesGridView_RowInserting(ByVal sender As Object, ByVal e As DevExpress.Web.Data.ASPxDataInsertingEventArgs)
         If e.NewValues("Name") IsNot Nothing Then
             Dim roleName As String = e.NewValues("Name").ToString()
@@ -427,7 +383,6 @@ Public Class Dashboard
             e.Cancel = True
             RolesGridView.CancelEdit()
         End If
-
         Dim selectQuery As String = "SELECT Id, Name FROM Roles"
         Using conn As New SqlConnection(connectionString)
             Dim cmd As New SqlCommand(selectQuery, conn)
@@ -452,7 +407,6 @@ Public Class Dashboard
         End Using
         e.Cancel = True
         RolesGridView.CancelEdit()
-
         Dim selectQuery As String = "SELECT Id, Name FROM Roles"
         Using conn As New SqlConnection(connectionString)
             Dim cmd As New SqlCommand(selectQuery, conn)
@@ -480,7 +434,6 @@ Public Class Dashboard
             End Using
             e.Cancel = True
         End If
-
         Dim selectQuery As String = "SELECT Id, Name FROM Roles"
         Using conn As New SqlConnection(connectionString)
             Dim cmd As New SqlCommand(selectQuery, conn)
@@ -499,7 +452,6 @@ Public Class Dashboard
                 e.Errors(RolesGridView.Columns("Name")) = "The name must contain only letters and have at least two words."
             End If
         End If
-
         If e.Errors.Count > 0 Then
             e.RowError = "Please fill in all fields correctly."
         End If
@@ -512,7 +464,7 @@ Public Class Dashboard
 
     Protected Sub RolesGridView_DataBinding(ByVal sender As Object, ByVal e As EventArgs)
         RolesGridView.DataSource = Session("RolesDs")
-    End Sub
 
+    End Sub
 
 End Class
