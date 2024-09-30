@@ -12,18 +12,14 @@ Public Class Dashboard
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         If Not IsPostBack Then
-
-            Debug.Write("Here Page Load \n")
-            Debug.Write("Here BindUsersGridView call \n")
             BindUsersGridView()
-            Debug.Write("Here BindRolesGridView call \n")
             BindRolesGridView()
         End If
 
 
     End Sub
     Protected Sub UsersbtnExportPDF_Click(sender As Object, e As EventArgs)
-        Dim dataTable As DataTable = GetUsersDataFromProcedure() ' Get data from stored procedure
+        Dim dataTable As DataTable = GetUsersDataFromProcedure()
         If dataTable Is Nothing OrElse dataTable.Rows.Count = 0 Then
             System.Diagnostics.Debug.WriteLine("The DataTable is empty. No data returned from the procedure.")
             Return ' Exit if there's no data
@@ -34,14 +30,14 @@ Public Class Dashboard
         Next
 
         Dim rptDoc As New ReportDocument()
-        Dim reportPath As String = Server.MapPath("~/UsersReport.rpt") ' Path to Crystal Report file
-        rptDoc.Load(reportPath) ' Load the Crystal Report
-        rptDoc.SetDataSource(dataTable) ' Set data source to the DataTable
+        Dim reportPath As String = Server.MapPath("~/UsersReport.rpt")
+        rptDoc.Load(reportPath)
+        rptDoc.SetDataSource(dataTable)
 
         Dim directoryPath As String = Server.MapPath("~/Reports")
         Dim filePath As String = Path.Combine(directoryPath, "UsersReport.pdf")
         If Not Directory.Exists(directoryPath) Then
-            Directory.CreateDirectory(directoryPath) ' Create directory if not exists
+            Directory.CreateDirectory(directoryPath)
         End If
 
         Dim exportOptions As New ExportOptions()
@@ -166,8 +162,8 @@ Public Class Dashboard
 
 
     Private Function IsValidPassword(password As String) As Boolean
-        Dim regex As New Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$") ' Use double quotes
-        Return regex.IsMatch(password) ' No semicolon needed
+        Dim regex As New Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$")
+        Return regex.IsMatch(password)
     End Function
 
 
@@ -176,10 +172,10 @@ Public Class Dashboard
         Dim query As String = "SELECT COUNT(*) FROM [dbo].[Users] WHERE RoleId = @RoleId"
 
         Using conn As New SqlConnection(connectionString)
-            Using cmd As New SqlCommand(query, conn) ' Use 'query' instead of 'Query'
+            Using cmd As New SqlCommand(query, conn)
                 cmd.Parameters.AddWithValue("@RoleId", RoleId)
                 conn.Open()
-                Dim count As Integer = Convert.ToInt32(cmd.ExecuteScalar()) ' Proper casting
+                Dim count As Integer = Convert.ToInt32(cmd.ExecuteScalar())
                 isAssigned = count > 0
             End Using
         End Using
@@ -189,7 +185,7 @@ Public Class Dashboard
     Private Sub BindRolesGridView()
         Dim query As String = "SELECT Id, Name FROM Roles"
         Using conn As New SqlConnection(connectionString)
-            Using cmd As New SqlCommand(query, conn) ' Use 'query' instead of 'Query'
+            Using cmd As New SqlCommand(query, conn)
                 Using da As New SqlDataAdapter(cmd)
                     Dim dt As New DataTable()
                     da.Fill(dt)
@@ -205,14 +201,14 @@ Public Class Dashboard
 
     Protected Function GetUsersDataFromProcedure() As DataTable
         Dim dt As New DataTable()
-        Dim storedProcedureName As String = "RetriveAllData" ' Ensure this matches exactly with your stored procedure name
+        Dim storedProcedureName As String = "RetriveAllData"
         Try
             Using conn As New SqlConnection(connectionString)
                 conn.Open()
                 Using cmd As New SqlCommand(storedProcedureName, conn)
                     cmd.CommandType = CommandType.StoredProcedure
                     Using da As New SqlDataAdapter(cmd)
-                        da.Fill(dt) ' Fill the DataTable with the result from the stored procedure
+                        da.Fill(dt)
                     End Using
                 End Using
             End Using
@@ -230,7 +226,7 @@ Public Class Dashboard
                 Using cmd As New SqlCommand(storedProcedureName, conn)
                     cmd.CommandType = CommandType.StoredProcedure
                     Using da As New SqlDataAdapter(cmd)
-                        da.Fill(dt) ' Fill the DataTable with the result from the stored procedure
+                        da.Fill(dt)
                     End Using
                 End Using
             End Using

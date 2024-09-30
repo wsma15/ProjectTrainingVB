@@ -11,13 +11,13 @@
 <body>
     <form id="form1" runat="server">
         <div>
-            <dx:ASPxLabel ID="Usernamelbl" runat="server" Text="username"></dx:ASPxLabel>
-            <dx:ASPxTextBox ID="Usernametxt" runat="server" Width="170px"></dx:ASPxTextBox>
+            <dx:ASPxLabel ID="Usernamelbl" runat="server" Text="username" Theme="Default"></dx:ASPxLabel>
+            <dx:ASPxTextBox ID="Usernametxt" runat="server" Width="170px" Theme="Default"></dx:ASPxTextBox>
             <br />
-            <dx:ASPxLabel ID="Passwordlbl" runat="server" Text="password"></dx:ASPxLabel>
-            <dx:ASPxTextBox ID="Passwordtxt" runat="server" Width="170px" Password="True"></dx:ASPxTextBox>
+            <dx:ASPxLabel ID="Passwordlbl" runat="server" Text="password" Theme="Default"></dx:ASPxLabel>
+            <dx:ASPxTextBox ID="Passwordtxt" runat="server" Width="170px" Password="True" Theme="Default"></dx:ASPxTextBox>
             <br />
-            <dx:ASPxButton ID="Loginbtn" runat="server" Text="Login" OnClick="Loginbtn_Click" AutoPostBack="False"></dx:ASPxButton>
+            <dx:ASPxButton ID="Loginbtn" runat="server" Text="Login" OnClick="Loginbtn_Click" AutoPostBack="False" Theme="Default"></dx:ASPxButton>
         </div>
     </form>
 </body>

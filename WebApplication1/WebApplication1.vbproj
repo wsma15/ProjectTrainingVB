@@ -99,6 +99,7 @@
   <ItemGroup>
     <Content Include="Dashboard.aspx" />
     <Content Include="login.aspx" />
+    <Content Include="register.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -136,6 +137,13 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="PasswordHelper.vb" />
+    <Compile Include="register.aspx.designer.vb">
+      <DependentUpon>register.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="register.aspx.vb">
+      <DependentUpon>register.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
     <Compile Include="UsersReport.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
