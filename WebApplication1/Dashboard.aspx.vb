@@ -464,7 +464,6 @@ Public Class Dashboard
 
     Protected Sub RolesGridView_DataBinding(ByVal sender As Object, ByVal e As EventArgs)
         RolesGridView.DataSource = Session("RolesDs")
-
     End Sub
 
 End Class
