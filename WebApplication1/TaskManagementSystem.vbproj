@@ -97,23 +97,23 @@
     <Import Include="System.Web.UI.HtmlControls" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Dashboard.aspx" />
-    <Content Include="login.aspx" />
-    <Content Include="register.aspx" />
+    <Content Include="Admin\Dashboard.aspx" />
+    <Content Include="Log\login.aspx" />
+    <Content Include="Log\register.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Dashboard.aspx.designer.vb">
+    <Compile Include="Admin\Dashboard.aspx.designer.vb">
       <DependentUpon>Dashboard.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Dashboard.aspx.vb">
+    <Compile Include="Admin\Dashboard.aspx.vb">
       <DependentUpon>Dashboard.aspx</DependentUpon>
       <SubType>ASPXCodebehind</SubType>
     </Compile>
-    <Compile Include="login.aspx.designer.vb">
+    <Compile Include="Log\login.aspx.designer.vb">
       <DependentUpon>login.aspx</DependentUpon>
     </Compile>
-    <Compile Include="login.aspx.vb">
+    <Compile Include="Log\login.aspx.vb">
       <DependentUpon>login.aspx</DependentUpon>
       <SubType>ASPXCodebehind</SubType>
     </Compile>
@@ -137,10 +137,10 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="PasswordHelper.vb" />
-    <Compile Include="register.aspx.designer.vb">
+    <Compile Include="Log\register.aspx.designer.vb">
       <DependentUpon>register.aspx</DependentUpon>
     </Compile>
-    <Compile Include="register.aspx.vb">
+    <Compile Include="Log\register.aspx.vb">
       <DependentUpon>register.aspx</DependentUpon>
       <SubType>ASPXCodebehind</SubType>
     </Compile>
@@ -184,6 +184,10 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Employee\" />
+    <Folder Include="Manager\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

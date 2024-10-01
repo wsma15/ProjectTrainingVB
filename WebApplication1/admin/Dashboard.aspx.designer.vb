@@ -50,6 +50,42 @@ Partial Public Class Dashboard
     Protected WithEvents UsersGridView As Global.DevExpress.Web.ASPxGridView
 
     '''<summary>
+    '''TasksGridView control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents TasksGridView As Global.DevExpress.Web.ASPxGridView
+
+    '''<summary>
+    '''TaskDataSource control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents TaskDataSource As Global.System.Web.UI.WebControls.SqlDataSource
+
+    '''<summary>
+    '''PriorityDataSource control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents PriorityDataSource As Global.System.Web.UI.WebControls.SqlDataSource
+
+    '''<summary>
+    '''ManagerDataSource control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents ManagerDataSource As Global.System.Web.UI.WebControls.SqlDataSource
+
+    '''<summary>
     '''RoleDataSource control.
     '''</summary>
     '''<remarks>
