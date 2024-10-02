@@ -100,6 +100,7 @@
     <Content Include="Admin\Dashboard.aspx" />
     <Content Include="Log\login.aspx" />
     <Content Include="Log\register.aspx" />
+    <Content Include="Manager\dashboard.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -115,6 +116,13 @@
     </Compile>
     <Compile Include="Log\login.aspx.vb">
       <DependentUpon>login.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="Manager\dashboard.aspx.designer.vb">
+      <DependentUpon>dashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Manager\dashboard.aspx.vb">
+      <DependentUpon>dashboard.aspx</DependentUpon>
       <SubType>ASPXCodebehind</SubType>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -187,7 +195,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Employee\" />
-    <Folder Include="Manager\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
