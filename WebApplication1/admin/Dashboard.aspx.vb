@@ -6,7 +6,7 @@ Imports System.IO
 
 Public Class Dashboard
     Inherits System.Web.UI.Page
-    Protected ReadOnly connectionString As String = "Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TrainingApp;Integrated Security=True"
+    Protected ReadOnly connectionString As String = "Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TMSDB;Integrated Security=True"
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         If Not IsPostBack Then
@@ -97,8 +97,8 @@ Public Class Dashboard
     End Sub
 
     Private Sub BindUsersGridView()
-        Dim rptdoc As New ReportDocument()
-        rptdoc.Load(Server.MapPath("~/UsersReport.rpt"))
+        'Dim rptdoc As New ReportDocument()
+        ' rptdoc.Load(Server.MapPath("~/UsersReport.rpt"))
         Dim query As String = "SELECT Id, Name, Username, Password, RoleId, ManagerId FROM [dbo].[Users]"
         Using conn As New SqlConnection(connectionString)
             Dim cmd As New SqlCommand(query, conn)
@@ -147,7 +147,7 @@ Public Class Dashboard
         Return isAssigned
     End Function
     Private Sub BindTasksGridView()
-        Dim query As String = "SELECT [Id],[CreateId],[Title],[Priority],[Status],[Description],[Deadline]FROM [TrainingApp].[dbo].[Tasks]"
+        Dim query As String = "SELECT [Id],[CreateDate],[Title],[Priority],[StatusId],[Description],[Deadline], [AssignedTaskId] FROM [TMSDB].[dbo].[Tasks]"
         Using conn As New SqlConnection(connectionString)
             Using cmd As New SqlCommand(query, conn)
                 Using da As New SqlDataAdapter(cmd)
@@ -224,25 +224,25 @@ Public Class Dashboard
             Dim hashedPassword As String = PasswordHelper.HashPassword(password)
             Dim roleId As Object = e.NewValues("RoleId")
 
-            ' Check if RoleId is missing
-            If roleId Is Nothing Then
-                e.Cancel = True
-                UsersGridView.JSProperties("cpMessage") = "Role ID is missing."
-                Return
-            End If
+            '' Check if RoleId is missing
+            'If roleId Is Nothing Then
+            '    e.Cancel = True
+            '    UsersGridView.JSProperties("cpMessage") = "Role ID is missing."
+            '    Return
+            'End If
 
-            ' Validate username and password
-            If Not IsValidUsername(username) Then
-                e.Cancel = True
-                UsersGridView.JSProperties("cpMessage") = "Username must be at least 6 characters long and contain no spaces or special characters."
-                Return
-            End If
+            '' Validate username and password
+            'If Not IsValidUsername(username) Then
+            '    e.Cancel = True
+            '    UsersGridView.JSProperties("cpMessage") = "Username must be at least 6 characters long and contain no spaces or special characters."
+            '    Return
+            'End If
 
-            If Not IsValidPassword(password) Then
-                e.Cancel = True
-                UsersGridView.JSProperties("cpMessage") = "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one digit, and one special character."
-                Return
-            End If
+            'If Not IsValidPassword(password) Then
+            '    e.Cancel = True
+            '    UsersGridView.JSProperties("cpMessage") = "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one digit, and one special character."
+            '    Return
+            'End If
 
             ' Check if username exists
             Dim checkQuery As String = "SELECT COUNT(1) FROM [dbo].[Users] WHERE Username = @Username"
@@ -288,7 +288,7 @@ Public Class Dashboard
         ' Generate the report
         Dim rptdoc As New ReportDocument()
         rptdoc.Load(Server.MapPath("~/UsersReport.rpt"))
-        Dim query As String = "SELECT [Id],[Name],[Username],[Password],[RoleId],[ManagerId] FROM [TrainingApp].[dbo].[Users]"
+        Dim query As String = "SELECT [Id],[Name],[Username],[Password],[RoleId],[ManagerId] FROM [TMSDB].[dbo].[Users]"
         Using conn As New SqlConnection(connectionString)
             Dim cmd As New SqlCommand(query, conn)
             Dim da As New SqlDataAdapter(cmd)
@@ -338,7 +338,7 @@ Public Class Dashboard
         Dim rptdoc As New ReportDocument()
         rptdoc.Load(Server.MapPath("~/UsersReport.rpt"))
 
-        Dim selectQuery As String = "SELECT [Id],[Name],[Username],[Password],[RoleId],[ManagerId] FROM [TrainingApp].[dbo].[Users]"
+        Dim selectQuery As String = "SELECT [Id],[Name],[Username],[Password],[RoleId],[ManagerId] FROM [TMSDB].[dbo].[Users]"
         Using conn As New SqlConnection(connectionString)
             Dim cmd As New SqlCommand(selectQuery, conn)
             Dim da As New SqlDataAdapter(cmd)
@@ -430,7 +430,7 @@ Public Class Dashboard
             e.Cancel = True
             Dim rptdoc As New ReportDocument()
             rptdoc.Load(Server.MapPath("~/UsersReport.rpt"))
-            query = "SELECT [Id],[Name],[Username],[Password],[RoleId],[ManagerId] FROM [TrainingApp].[dbo].[Users]"
+            query = "SELECT [Id],[Name],[Username],[Password],[RoleId],[ManagerId] FROM [TMSDB].[dbo].[Users]"
             Using conn As New SqlConnection(connectionString)
                 Dim cmd As New SqlCommand(query, conn)
                 Dim da As New SqlDataAdapter(cmd)
@@ -550,18 +550,233 @@ Public Class Dashboard
     End Sub
 
     Protected Sub TasksGridView_RowInserting(sender As Object, e As Data.ASPxDataInsertingEventArgs)
+        ' Set default values for CreateDate and StatusId
+        Dim CreateDate As DateTime = DateTime.Now ' Set to today's date
+        Dim statusId As Integer = GetStatusId("Not Started") ' Assume GetStatusId function returns the ID for the 'Not Started' status
 
+        If e.NewValues("Title") IsNot Nothing Then
+            Dim title As String = e.NewValues("Title").ToString()
+            Dim priority As String = e.NewValues("Priority")?.ToString() ' Using ?. for safety
+            Dim description As String = e.NewValues("Description")?.ToString()
+            Dim deadline As Object = e.NewValues("Deadline") ' Keep as Object for potential NULL
+            Dim assignedTaskId As Object = e.NewValues("AssignedTaskId") ' Same for AssignedTaskId
+
+            ' Insert the new task
+            Dim insertQuery As String = "INSERT INTO [dbo].[Tasks] (CreateDate, Title, Priority, StatusId, Description, Deadline, AssignedTaskId) VALUES (@CreateDate, @Title, @Priority, @StatusId, @Description, @Deadline, @AssignedTaskId)"
+            Using conn As New SqlConnection(connectionString)
+                Dim insertCmd As New SqlCommand(insertQuery, conn)
+                insertCmd.Parameters.AddWithValue("@CreateDate", CreateDate) ' Use today's date
+                insertCmd.Parameters.AddWithValue("@Title", title)
+                insertCmd.Parameters.AddWithValue("@Priority", priority)
+                insertCmd.Parameters.AddWithValue("@StatusId", statusId) ' Default to "Not Started"
+
+                ' Handle Description safely
+                If String.IsNullOrEmpty(description) Then
+                    insertCmd.Parameters.AddWithValue("@Description", DBNull.Value)
+                Else
+                    insertCmd.Parameters.AddWithValue("@Description", description)
+                End If
+
+                ' Handle Deadline safely
+                If deadline Is DBNull.Value OrElse deadline Is Nothing Then
+                    insertCmd.Parameters.AddWithValue("@Deadline", DBNull.Value) ' Use NULL if no deadline
+                Else
+                    insertCmd.Parameters.AddWithValue("@Deadline", Convert.ToDateTime(deadline)) ' Ensure it's a DateTime
+                End If
+
+                ' Handle AssignedTaskId safely
+                If assignedTaskId Is DBNull.Value OrElse assignedTaskId Is Nothing Then
+                    insertCmd.Parameters.AddWithValue("@AssignedTaskId", DBNull.Value) ' Use NULL if there's no assigned task
+                Else
+                    insertCmd.Parameters.AddWithValue("@AssignedTaskId", Convert.ToInt32(assignedTaskId)) ' Ensure it's an integer
+                End If
+
+                ' Execute the query
+                conn.Open()
+                insertCmd.ExecuteNonQuery()
+                conn.Close()
+            End Using
+
+            e.Cancel = True
+            TasksGridView.CancelEdit()
+        End If
+
+        ' Generate the report
+        'Dim rptdoc As New ReportDocument()
+        'rptdoc.Load(Server.MapPath("~/TasksReport.rpt"))
+        Dim query As String = "SELECT [Id], [CreateDate], [Title], [Priority], [StatusId], [Description], [Deadline], [AssignedTaskId] FROM [TMSDB].[dbo].[Tasks]"
+        Using conn As New SqlConnection(connectionString)
+            Dim cmd As New SqlCommand(query, conn)
+            Dim da As New SqlDataAdapter(cmd)
+            Dim dt As New DataTable()
+            conn.Open()
+            da.Fill(dt)
+            conn.Close()
+
+            ' Store the dataset in session (if necessary)
+            Session("TasksDs") = dt
+        End Using
     End Sub
 
-    Protected Sub TasksGridView_RowUpdating(sender As Object, e As Data.ASPxDataUpdatingEventArgs)
+    ' Helper function to get the status ID based on the status name
+    Private Function GetStatusId(statusName As String) As Integer
+        Dim statusId As Integer = 0
+        Dim query As String = "SELECT StatusId FROM [dbo].[Status] WHERE StatusName = @StatusName"
+        Using conn As New SqlConnection(connectionString)
+            Dim cmd As New SqlCommand(query, conn)
+            cmd.Parameters.AddWithValue("@StatusName", statusName)
+            conn.Open()
+            Dim result As Object = cmd.ExecuteScalar()
+            If result IsNot Nothing Then
+                statusId = Convert.ToInt32(result)
+            End If
+            conn.Close()
+        End Using
+        Return statusId
+    End Function
 
-    End Sub
 
     Protected Sub TasksGridView_RowDeleting(sender As Object, e As Data.ASPxDataDeletingEventArgs)
+        ' Ensure the Task ID is provided
+        If e.Values("Id") IsNot Nothing Then
+            Dim taskId As Integer = Convert.ToInt32(e.Values("Id"))
 
+            ' Delete query to remove the task by its ID
+            Dim deleteQuery As String = "DELETE FROM [dbo].[Tasks] WHERE Id = @Id"
+
+            Using conn As New SqlConnection(connectionString)
+                Dim deleteCmd As New SqlCommand(deleteQuery, conn)
+                deleteCmd.Parameters.AddWithValue("@Id", taskId)
+
+                conn.Open()
+                deleteCmd.ExecuteNonQuery()
+                conn.Close()
+            End Using
+
+            ' Cancel the default delete operation (since we manually handle it)
+            e.Cancel = True
+        Else
+            ' If no Task ID is provided, cancel the deletion and display an error message
+            e.Cancel = True
+            TasksGridView.JSProperties("cpMessage") = "Task ID is missing."
+        End If
+        Dim query As String = "SELECT [Id], [CreateDate], [Title], [Priority], [StatusId], [Description], [Deadline], [AssignedTaskId] FROM [TMSDB].[dbo].[Tasks]"
+        Using conn As New SqlConnection(connectionString)
+            Dim cmd As New SqlCommand(query, conn)
+            Dim da As New SqlDataAdapter(cmd)
+            Dim dt As New DataTable()
+            conn.Open()
+            da.Fill(dt)
+            conn.Close()
+
+            ' Store the dataset in session (if necessary)
+            Session("TasksDs") = dt
+        End Using
     End Sub
 
     Protected Sub TasksGridView_RowValidating(sender As Object, e As Data.ASPxDataValidationEventArgs)
+        ' Validate CreateDate (should be a valid date)
+        e.NewValues("CreateDate") = Date.Now
 
+        If e.NewValues("CreateDate") Is Nothing Then
+            e.Errors(TasksGridView.Columns("CreateDate")) = "Create date is required and must be a valid date."
+        End If
+
+        ' Validate Title (required, should not be empty)
+        If e.NewValues("Title") Is Nothing OrElse String.IsNullOrWhiteSpace(e.NewValues("Title").ToString()) Then
+            e.Errors(TasksGridView.Columns("Title")) = "Title is required."
+        End If
+
+        ' Validate Priority (required, should be Low, Medium, or High)
+        If e.NewValues("Priority") Is Nothing Then
+            e.Errors(TasksGridView.Columns("Priority")) = "Priority must be Low, Medium, or High."
+        End If
+
+        ' Validate Deadline (if provided, it must be a valid date)
+        If e.NewValues("Deadline") Is Nothing Then
+            e.Errors(TasksGridView.Columns("Deadline")) = "Deadline must be a valid date."
+        End If
+
+        ' If there are any errors, cancel the operation and display error messages
+        If e.Errors.Count > 0 Then
+            e.RowError = $"{e.Errors.Last}Please correct all errors and try again."
+        End If
+    End Sub
+
+    Protected Sub TasksGridView_RowUpdating(sender As Object, e As Data.ASPxDataUpdatingEventArgs)
+        ' Check if required fields are not null
+        Dim taskId As Integer = Convert.ToInt32(e.Keys("Id")) ' Get the primary key (Task Id)
+        Dim title As String = e.NewValues("Title").ToString()
+        Dim priority As String = e.NewValues("Priority")?.ToString() ' Use ?. for safety
+        Dim statusId As Object = e.NewValues("StatusId") ' Foreign key for status
+        Dim description As String = e.NewValues("Description")?.ToString()
+        Dim deadline As Object = e.NewValues("Deadline") ' Can be NULL
+        Dim assignedTaskId As Object = e.NewValues("AssignedTaskId") ' Can be NULL
+
+        ' Check if StatusId is missing
+        If statusId Is Nothing Then
+            e.Cancel = True
+            TasksGridView.JSProperties("cpMessage") = "Status ID is required."
+            Return
+        End If
+        Debug.Write("updwwating...")
+
+        ' Update query
+        Dim updateQuery As String = "UPDATE [dbo].[Tasks] 
+                                     SET  Title = @Title, Priority = @Priority, 
+                                         StatusId = @StatusId, Description = @Description, 
+                                         Deadline = @Deadline, AssignedTaskId = @AssignedTaskId 
+                                     WHERE Id = @Id"
+
+        ' Execute the update
+        Using conn As New SqlConnection(connectionString)
+            Dim updateCmd As New SqlCommand(updateQuery, conn)
+            updateCmd.Parameters.AddWithValue("@Title", title)
+            updateCmd.Parameters.AddWithValue("@Priority", priority)
+            updateCmd.Parameters.AddWithValue("@StatusId", statusId)
+
+            ' Handle Description safely
+            If String.IsNullOrEmpty(description) Then
+                updateCmd.Parameters.AddWithValue("@Description", DBNull.Value)
+            Else
+                updateCmd.Parameters.AddWithValue("@Description", description)
+            End If
+
+            ' Handle Deadline safely
+            If deadline Is DBNull.Value OrElse deadline Is Nothing Then
+                updateCmd.Parameters.AddWithValue("@Deadline", DBNull.Value) ' Use NULL if no deadline
+            Else
+                updateCmd.Parameters.AddWithValue("@Deadline", Convert.ToDateTime(deadline)) ' Ensure it's DateTime
+            End If
+
+            ' Handle AssignedTaskId safely
+            If assignedTaskId Is DBNull.Value OrElse assignedTaskId Is Nothing Then
+
+                updateCmd.Parameters.AddWithValue("@AssignedTaskId", DBNull.Value) ' Use NULL if no assigned task
+            Else
+                updateCmd.Parameters.AddWithValue("@AssignedTaskId", Convert.ToInt32(assignedTaskId)) ' Ensure it's integer
+            End If
+
+            updateCmd.Parameters.AddWithValue("@Id", taskId) ' Use TaskId for the WHERE clause
+
+            ' Open the connection and execute the command
+            conn.Open()
+            updateCmd.ExecuteNonQuery()
+            conn.Close()
+        End Using
+        Dim query As String = "SELECT [Id], [CreateDate], [Title], [Priority], [StatusId], [Description], [Deadline], [AssignedTaskId] FROM [TMSDB].[dbo].[Tasks]"
+        Using conn As New SqlConnection(connectionString)
+            Dim cmd As New SqlCommand(query, conn)
+            Dim da As New SqlDataAdapter(cmd)
+            Dim dt As New DataTable()
+            conn.Open()
+            da.Fill(dt)
+            conn.Close()
+
+            ' Store the dataset in session (if necessary)
+            Session("TasksDs") = dt
+        End Using
+        e.Cancel = True
+        TasksGridView.CancelEdit()
     End Sub
 End Class

@@ -13,8 +13,8 @@
         function OnGridEndCallback(s, e) {
             var errorMessage = s.cpErrorMessage;
             if (errorMessage) {
-                alert(errorMessage); // Show the alert or use a better UI notification
-                s.cpErrorMessage = null; // Clear the message after showing
+                alert(errorMessage);
+                s.cpErrorMessage = null; 
             }
         }
     </script>
@@ -91,28 +91,45 @@
                     <dx:TabPage Name="TasksPage" Text="Tasks">
                         <ContentCollection>
                             <dx:ContentControl runat="server">
-                                <dx:ASPxGridView ID="TasksGridView" runat="server" AutoGenerateColumns="false" KeyFieldName="Id" EnableRowsCache="false" EnableCallBacks="true" Theme="Default" 
+                                <dx:ASPxGridView ID="TasksGridView" runat="server" AutoGenerateColumns="false" KeyFieldName="Id" 
+                                    EnableRowsCache="false" 
+                                    EnableCallBacks="true"
+                                    Theme="Default" 
                                     OnDataBinding="TasksGridView_DataBinding"
                                     OnRowInserting="TasksGridView_RowInserting"
                                     OnRowUpdating="TasksGridView_RowUpdating"
                                     OnRowDeleting="TasksGridView_RowDeleting"
                                     OnRowValidating="TasksGridView_RowValidating">
-                                    <SettingsPager Visible="False"></SettingsPager>
+                                    <Settings ShowFilterRow="True" ShowGroupPanel="True"></Settings>
+
+                                    <SettingsSearchPanel Visible="True"></SettingsSearchPanel>
                                     <SettingsDataSecurity AllowEdit="true" AllowInsert="true" AllowDelete="true" />
                                     <Columns>
-                                        <dx:GridViewCommandColumn VisibleIndex="0" ShowNewButton="True" />
+                                        <dx:GridViewCommandColumn VisibleIndex="0" ShowNewButton="True" ShowNewButtonInHeader="True" ShowDeleteButton="True" SelectAllCheckboxMode="Page" ShowSelectCheckbox="True" ShowClearFilterButton="True" ShowEditButton="True" />
                                         <dx:GridViewDataTextColumn FieldName="Id" Caption="ID" VisibleIndex="1">
                                             <EditFormSettings Visible="False" />
                                         </dx:GridViewDataTextColumn>
                                         <dx:GridViewDataTextColumn FieldName="Title" Caption="Title" VisibleIndex="2" ReadOnly="false" LoadReadOnlyValueFromDataModel="false" />
                                         <dx:GridViewDataTextColumn FieldName="Description" Caption="Description" VisibleIndex="3" ReadOnly="false" LoadReadOnlyValueFromDataModel="false" />
-                                        <dx:GridViewDataTextColumn FieldName="CreateId" Caption="Created" VisibleIndex="4" ReadOnly="false" LoadReadOnlyValueFromDataModel="false" EditFormSettings-Visible="False" />
-                                        <dx:GridViewDataComboBoxColumn FieldName="Priority" Caption="Priority" VisibleIndex="5" ReadOnly="false"
+                                        <dx:GridViewDataComboBoxColumn FieldName="AssignedTaskId" Caption="Assigned To" VisibleIndex="4" ReadOnly="false"
+    PropertiesComboBox-DataSourceID="UserDataSource"
+    PropertiesComboBox-TextField="name"
+    PropertiesComboBox-ValueField="Id"
+    LoadReadOnlyValueFromDataModel="false"
+    EditFormSettings-Visible="True" />
+                                        <dx:GridViewDataComboBoxColumn FieldName="StatusId" Caption="status" VisibleIndex="4" ReadOnly="false"
+    PropertiesComboBox-DataSourceID="StatusDataSource"
+    PropertiesComboBox-TextField="StatusName"
+    PropertiesComboBox-ValueField="StatusId"
+    LoadReadOnlyValueFromDataModel="false"
+    EditFormSettings-Visible="True" />
+                                        <dx:GridViewDataTextColumn FieldName="CreateDate" Caption="Created" VisibleIndex="5" ReadOnly="false" LoadReadOnlyValueFromDataModel="false" EditFormSettings-Visible="False" />
+                                        <dx:GridViewDataComboBoxColumn FieldName="Priority" Caption="Priority" VisibleIndex="6" ReadOnly="false"
                                             PropertiesComboBox-DataSourceID="PriorityDataSource"
                                             PropertiesComboBox-TextField="name"
                                             PropertiesComboBox-ValueField="Id"
                                             LoadReadOnlyValueFromDataModel="false" />
-                                        <dx:GridViewDataDateColumn FieldName="Deadline" Caption="Deadline" VisibleIndex="6" ReadOnly="false" LoadReadOnlyValueFromDataModel="false" />
+                                        <dx:GridViewDataDateColumn FieldName="Deadline" Caption="Deadline" VisibleIndex="7" ReadOnly="false" LoadReadOnlyValueFromDataModel="false" />
                                     </Columns>
                                 </dx:ASPxGridView>
                             </dx:ContentControl>
@@ -122,20 +139,28 @@
             </dx:ASPxPageControl>
 
             <asp:SqlDataSource ID="TaskDataSource" runat="server"
-                ConnectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TrainingApp;Integrated Security=True"
-                SelectCommand="SELECT  [Id],[CreateId],[Title],[Priority],[Status],[Description],[Deadline] FROM [TrainingApp].[dbo].[Tasks]" />
+                ConnectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TMSDB;Integrated Security=True"
+                SelectCommand="SELECT  [Id],[CreateDate],[Title],[Priority],[StatusId],[Description],[Deadline], [AssignedTaskId] FROM [TMSDB].[dbo].[Tasks]" />
+            
             <asp:SqlDataSource ID="PriorityDataSource" runat="server"
-                ConnectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TrainingApp;Integrated Security=True"
-                SelectCommand="SELECT [id],[Name]  FROM [TrainingApp].[dbo].[Priority]" />
+                ConnectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TMSDB;Integrated Security=True"
+                SelectCommand="SELECT [id],[Name]  FROM [TMSDB].[dbo].[Priority]" />
+            
             <asp:SqlDataSource ID="ManagerDataSource" runat="server"
-                ConnectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TrainingApp;Integrated Security=True"
-                SelectCommand="SELECT [id],[Name]  FROM [TrainingApp].[dbo].[users] where Roleid = 5003" />
+                ConnectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TMSDB;Integrated Security=True"
+                SelectCommand="SELECT [id],[Name]  FROM [TMSDB].[dbo].[users] where Roleid = 5003" />
+            
             <asp:SqlDataSource ID="RoleDataSource" runat="server"
-                ConnectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TrainingApp;Integrated Security=True"
+                ConnectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TMSDB;Integrated Security=True"
                 SelectCommand="SELECT Id, Name FROM [dbo].[Roles]" />
+            
             <asp:SqlDataSource ID="UserDataSource" runat="server"
-                ConnectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TrainingApp;Integrated Security=True"
+                ConnectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TMSDB;Integrated Security=True"
                 SelectCommand="SELECT [Id],[Name],[Username],[Password],[RoleId],[ManagerId]   FROM [dbo].[Users]" />
+            <asp:SqlDataSource ID="StatusDataSource" runat="server"
+                ConnectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TMSDB;Integrated Security=True"
+                SelectCommand="SELECT [StatusId],[StatusName] FROM [TMSDB].[dbo].[Status]"
+ />
         </div>
         <div>
             <asp:Button ID="UsersbtnExportPDF" runat="server" Text="Export to PDF" OnClick="UsersbtnExportPDF_Click" />

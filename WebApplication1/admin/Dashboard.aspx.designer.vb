@@ -104,6 +104,15 @@ Partial Public Class Dashboard
     Protected WithEvents UserDataSource As Global.System.Web.UI.WebControls.SqlDataSource
 
     '''<summary>
+    '''StatusDataSource control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents StatusDataSource As Global.System.Web.UI.WebControls.SqlDataSource
+
+    '''<summary>
     '''UsersbtnExportPDF control.
     '''</summary>
     '''<remarks>
