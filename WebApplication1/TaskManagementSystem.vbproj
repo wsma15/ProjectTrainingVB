@@ -98,6 +98,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Admin\Dashboard.aspx" />
+    <Content Include="Employee\dashboard.aspx" />
     <Content Include="Log\login.aspx" />
     <Content Include="Log\register.aspx" />
     <Content Include="Manager\dashboard.aspx" />
@@ -109,6 +110,13 @@
     </Compile>
     <Compile Include="Admin\Dashboard.aspx.vb">
       <DependentUpon>Dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="Employee\dashboard.aspx.designer.vb">
+      <DependentUpon>dashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Employee\dashboard.aspx.vb">
+      <DependentUpon>dashboard.aspx</DependentUpon>
       <SubType>ASPXCodebehind</SubType>
     </Compile>
     <Compile Include="Log\login.aspx.designer.vb">
@@ -193,9 +201,7 @@
   <ItemGroup>
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Employee\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

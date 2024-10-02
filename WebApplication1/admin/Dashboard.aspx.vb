@@ -335,8 +335,8 @@ Public Class Dashboard
         UsersGridView.CancelEdit()
 
         ' Reload the updated user list
-        Dim rptdoc As New ReportDocument()
-        rptdoc.Load(Server.MapPath("~/UsersReport.rpt"))
+        'Dim rptdoc As New ReportDocument()
+        'rptdoc.Load(Server.MapPath("~/UsersReport.rpt"))
 
         Dim selectQuery As String = "SELECT [Id],[Name],[Username],[Password],[RoleId],[ManagerId] FROM [TMSDB].[dbo].[Users]"
         Using conn As New SqlConnection(connectionString)
