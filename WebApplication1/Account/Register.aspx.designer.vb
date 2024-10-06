@@ -11,7 +11,7 @@ Option Strict On
 Option Explicit On
 
 
-Partial Public Class Dashboard
+Partial Public Class Register
     
     '''<summary>
     '''form1 control.
@@ -23,92 +23,83 @@ Partial Public Class Dashboard
     Protected WithEvents form1 As Global.System.Web.UI.HtmlControls.HtmlForm
     
     '''<summary>
-    '''ASPxPageControl1 control.
+    '''txtUsername control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ASPxPageControl1 As Global.DevExpress.Web.ASPxPageControl
+    Protected WithEvents txtUsername As Global.DevExpress.Web.ASPxTextBox
     
     '''<summary>
-    '''RolesGridView control.
+    '''txtName control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents RolesGridView As Global.DevExpress.Web.ASPxGridView
+    Protected WithEvents txtName As Global.DevExpress.Web.ASPxTextBox
     
     '''<summary>
-    '''UsersGridView control.
+    '''txtPassword control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents UsersGridView As Global.DevExpress.Web.ASPxGridView
+    Protected WithEvents txtPassword As Global.DevExpress.Web.ASPxTextBox
     
     '''<summary>
-    '''TasksGridView control.
+    '''txtConfirmPassword control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents TasksGridView As Global.DevExpress.Web.ASPxGridView
+    Protected WithEvents txtConfirmPassword As Global.DevExpress.Web.ASPxTextBox
     
     '''<summary>
-    '''TaskDataSource control.
+    '''ddlManager control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents TaskDataSource As Global.System.Web.UI.WebControls.SqlDataSource
+    Protected WithEvents ddlManager As Global.DevExpress.Web.ASPxComboBox
     
     '''<summary>
-    '''PriorityDataSource control.
+    '''btnRegister control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents PriorityDataSource As Global.System.Web.UI.WebControls.SqlDataSource
+    Protected WithEvents btnRegister As Global.DevExpress.Web.ASPxButton
     
     '''<summary>
-    '''ManagerDataSource control.
+    '''lblErrorMessage control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ManagerDataSource As Global.System.Web.UI.WebControls.SqlDataSource
+    Protected WithEvents lblErrorMessage As Global.DevExpress.Web.ASPxLabel
     
     '''<summary>
-    '''RoleDataSource control.
+    '''lblSuccessMessage control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents RoleDataSource As Global.System.Web.UI.WebControls.SqlDataSource
+    Protected WithEvents lblSuccessMessage As Global.DevExpress.Web.ASPxLabel
     
     '''<summary>
-    '''UserDataSource control.
+    '''RolesDataSource control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents UserDataSource As Global.System.Web.UI.WebControls.SqlDataSource
-    
-    '''<summary>
-    '''StatusDataSource control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents StatusDataSource As Global.System.Web.UI.WebControls.SqlDataSource
+    Protected WithEvents RolesDataSource As Global.System.Web.UI.WebControls.SqlDataSource
 End Class

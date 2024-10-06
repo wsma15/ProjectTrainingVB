@@ -16,90 +16,10 @@ Public Class Dashboard
         End If
     End Sub
 
-    Protected Sub UsersbtnExportPDF_Click(sender As Object, e As EventArgs)
-        Dim dataTable As DataTable = GetUsersDataFromProcedure()
-        If dataTable Is Nothing OrElse dataTable.Rows.Count = 0 Then
-            System.Diagnostics.Debug.WriteLine("The DataTable is empty. No data returned from the procedure.")
-            Return ' Exit if there's no data
-        End If
-        For Each row As DataRow In dataTable.Rows
-            System.Diagnostics.Debug.WriteLine("Row: " & row("username").ToString() & ", " & row("roleid").ToString())
-        Next
-        Dim rptDoc As New ReportDocument()
-        Dim reportPath As String = Server.MapPath("~/UsersReport.rpt")
-        rptDoc.Load(reportPath)
-        rptDoc.SetDataSource(dataTable)
-        Dim directoryPath As String = Server.MapPath("~/Reports")
-        Dim filePath As String = Path.Combine(directoryPath, "UsersReport.pdf")
-        If Not Directory.Exists(directoryPath) Then
-            Directory.CreateDirectory(directoryPath)
-        End If
-        Dim exportOptions As New ExportOptions()
-        Dim diskOptions As New DiskFileDestinationOptions()
-        Dim pdfOptions As New PdfRtfWordFormatOptions()
-        diskOptions.DiskFileName = filePath
-        exportOptions.ExportDestinationType = ExportDestinationType.DiskFile
-        exportOptions.ExportFormatType = ExportFormatType.PortableDocFormat
-        exportOptions.DestinationOptions = diskOptions
-        exportOptions.FormatOptions = pdfOptions
-        Try
-            rptDoc.Export(exportOptions)
-        Catch ex As Exception
-            Throw New Exception("An error occurred while exporting the report.", ex)
-        End Try
-        Dim file As New FileInfo(filePath)
-        If file.Exists Then
-            Response.Clear()
-            Response.Buffer = True
-            Response.AddHeader("content-disposition", "attachment;filename=" & file.Name)
-            Response.AddHeader("content-length", file.Length.ToString())
-            Response.ContentType = "application/pdf"
-            Response.WriteFile(file.FullName)
-            Response.End()
-        End If
-    End Sub
-
-    Protected Sub RolesbtnExportPDF_Click(sender As Object, e As EventArgs)
-        Dim dataTable As DataTable = GetRolesDataFromProcedure()
-        Dim rptDoc As New ReportDocument()
-        Dim reportPath As String = Server.MapPath("~/RolesReport.rpt")
-        rptDoc.Load(reportPath)
-        rptDoc.SetDataSource(dataTable)
-        Dim directoryPath As String = Server.MapPath("~/Reports")
-        Dim filePath As String = Path.Combine(directoryPath, "RolesReport.pdf")
-        If Not Directory.Exists(directoryPath) Then
-            Directory.CreateDirectory(directoryPath)
-        End If
-        Dim exportOptions As New ExportOptions()
-        Dim diskOptions As New DiskFileDestinationOptions()
-        Dim pdfOptions As New PdfRtfWordFormatOptions()
-        diskOptions.DiskFileName = filePath
-        exportOptions.ExportDestinationType = ExportDestinationType.DiskFile
-        exportOptions.ExportFormatType = ExportFormatType.PortableDocFormat
-        exportOptions.DestinationOptions = diskOptions
-        exportOptions.FormatOptions = pdfOptions
-        Try
-            rptDoc.Export(exportOptions)
-        Catch ex As Exception
-            Throw New Exception("An error occurred while exporting the report.", ex)
-        End Try
-        Dim file As New FileInfo(filePath)
-        If file.Exists Then
-            Response.Clear()
-            Response.Buffer = True
-            Response.AddHeader("content-disposition", "attachment;filename=" & file.Name)
-            Response.AddHeader("content-length", file.Length.ToString())
-            Response.ContentType = "application/pdf"
-            Response.WriteFile(file.FullName)
-            Response.Flush()
-            Response.SuppressContent = True
-        End If
-    End Sub
-
     Private Sub BindUsersGridView()
         'Dim rptdoc As New ReportDocument()
         ' rptdoc.Load(Server.MapPath("~/UsersReport.rpt"))
-        Dim query As String = "SELECT Id, Name, Username, Password, RoleId, ManagerId FROM [dbo].[Users]"
+        Dim query As String = "SELECT Id,Name,[Username],[Password],[RoleId],[ManagerId] FROM [TMSDB].[dbo].[Users]"
         Using conn As New SqlConnection(connectionString)
             Dim cmd As New SqlCommand(query, conn)
             Dim da As New SqlDataAdapter(cmd)
@@ -191,7 +111,7 @@ Public Class Dashboard
                 End Using
             End Using
         Catch ex As Exception
-            System.Diagnostics.Debug.WriteLine("Error: " & ex.Message)
+            Debug.WriteLine("Error: " & ex.Message)
         End Try
         Return dt
     End Function
@@ -286,8 +206,8 @@ Public Class Dashboard
         End If
 
         ' Generate the report
-        Dim rptdoc As New ReportDocument()
-        rptdoc.Load(Server.MapPath("~/UsersReport.rpt"))
+        '      Dim rptdoc As New ReportDocument()
+        '     rptdoc.Load(Server.MapPath("~/UsersReport.rpt"))
         Dim query As String = "SELECT [Id],[Name],[Username],[Password],[RoleId],[ManagerId] FROM [TMSDB].[dbo].[Users]"
         Using conn As New SqlConnection(connectionString)
             Dim cmd As New SqlCommand(query, conn)
@@ -309,14 +229,18 @@ Public Class Dashboard
     End Sub
 
     Protected Sub UsersGridView_RowUpdating(ByVal sender As Object, ByVal e As DevExpress.Web.Data.ASPxDataUpdatingEventArgs)
-        Dim username As String = e.Keys("Username").ToString()
+        Dim username As String = If(e.Keys("Id") IsNot Nothing, e.Keys("Id").ToString(), String.Empty)
+
+        If String.IsNullOrEmpty(username) Then
+            Throw New Exception("Username key is missing.")
+        End If
         Dim name As String = e.NewValues("Name").ToString()
         Dim password As String = e.NewValues("Password").ToString()
         Dim roleId As Integer = Convert.ToInt32(e.NewValues("RoleId"))
         Dim managerId As Integer? = If(e.NewValues("ManagerId") IsNot Nothing, Convert.ToInt32(e.NewValues("ManagerId")), CType(Nothing, Integer?))
 
         ' Create the SQL update query
-        Dim query As String = "UPDATE [dbo].[Users] SET Name = @Name, Password = @Password, RoleId = @RoleId, ManagerId = @ManagerId WHERE Username = @Username"
+        Dim query As String = "UPDATE [dbo].[Users] SET Name = @Name, Password = @Password, RoleId = @RoleId, ManagerId = @ManagerId WHERE Id = @Username"
 
         Using conn As New SqlConnection(connectionString)
             Dim cmd As New SqlCommand(query, conn)
@@ -428,8 +352,8 @@ Public Class Dashboard
             End Using
 
             e.Cancel = True
-            Dim rptdoc As New ReportDocument()
-            rptdoc.Load(Server.MapPath("~/UsersReport.rpt"))
+            '     Dim rptdoc As New ReportDocument()
+            ''    rptdoc.Load(Server.MapPath("~/UsersReport.rpt"))
             query = "SELECT [Id],[Name],[Username],[Password],[RoleId],[ManagerId] FROM [TMSDB].[dbo].[Users]"
             Using conn As New SqlConnection(connectionString)
                 Dim cmd As New SqlCommand(query, conn)
