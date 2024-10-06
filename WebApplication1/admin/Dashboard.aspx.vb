@@ -7,12 +7,22 @@ Imports System.IO
 Public Class Dashboard
     Inherits System.Web.UI.Page
     Protected ReadOnly connectionString As String = "Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TMSDB;Integrated Security=True"
-
+    Public Function UserIsInRole(roleName As String) As Boolean
+        ' Ensure the user is authenticated
+        If Session("RoleName") IsNot Nothing Then
+            Dim currentRole As String = Session("RoleName").ToString().ToLower()
+            Return currentRole.Equals(roleName.ToLower())
+        End If
+        Return False
+    End Function
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         If Not IsPostBack Then
             BindUsersGridView()
             BindRolesGridView()
             BindTasksGridView()
+        End If
+        If Not User.Identity.IsAuthenticated OrElse Not UserIsInRole("Admin") Then
+            Response.Redirect("~/Account/Login.aspx?ReturnUrl=" & Server.UrlEncode(Request.RawUrl))
         End If
     End Sub
 
