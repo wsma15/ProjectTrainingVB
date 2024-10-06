@@ -27,6 +27,7 @@
                         PropertiesComboBox-ValueField="StatusId" />
                 </Columns>
             </dx:ASPxGridView>
+            <dx:ASPxButton ID="btnDownloadReport" runat="server" Text="Download Task Report" OnClick="btnDownloadReport_Click" />
 
 <asp:SqlDataSource ID="EmployeeTaskDataSource" runat="server"
     ConnectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TMSDB;Integrated Security=True"
@@ -35,13 +36,11 @@
     <SelectParameters>
         <asp:SessionParameter Name="EmployeeId" SessionField="UserId" Type="Int32" DefaultValue="5" />
     </SelectParameters>
-    <UpdateParameters>
-       
+    <UpdateParameters>       
         <asp:Parameter Name="StatusId" Type="Int32" />
         <asp:Parameter Name="Id" Type="Int32" />
     </UpdateParameters>
 </asp:SqlDataSource>
-
             <asp:SqlDataSource ID="StatusDataSource" runat="server"
                 ConnectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TMSDB;Integrated Security=True"
                 SelectCommand="SELECT [StatusId], [StatusName] FROM [TMSDB].[dbo].[Status]" />
