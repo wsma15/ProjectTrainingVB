@@ -8,6 +8,7 @@
     <title>Dashboard</title>
 
 </head>
+<a href="Dashboard.aspx">Dashboard.aspx</a>
 <body>
     <script type="text/javascript">
         function OnGridEndCallback(s, e) {

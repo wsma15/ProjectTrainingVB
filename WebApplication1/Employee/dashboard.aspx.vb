@@ -15,6 +15,5 @@ Public Class dashboard2
         If Not UserIsInRole("Employee") Then
             Response.Redirect("~/Log/Login.aspx?ReturnUrl=" & Server.UrlEncode(Request.RawUrl))
         End If
-
     End Sub
 End Class
