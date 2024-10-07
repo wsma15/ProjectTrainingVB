@@ -121,8 +121,8 @@
   <ItemGroup>
     <Content Include="Admin\Dashboard.aspx" />
     <Content Include="Employee\dashboard.aspx" />
-    <Content Include="Log\Login.aspx" />
-    <Content Include="Log\Register.aspx" />
+    <Content Include="Account\Login.aspx" />
+    <Content Include="Account\Register.aspx" />
     <Content Include="Manager\dashboard.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -143,17 +143,17 @@
       <DependentUpon>dashboard.aspx</DependentUpon>
       <SubType>ASPXCodebehind</SubType>
     </Compile>
-    <Compile Include="Log\Login.aspx.designer.vb">
+    <Compile Include="Account\Login.aspx.designer.vb">
       <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Log\Login.aspx.vb">
+    <Compile Include="Account\Login.aspx.vb">
       <DependentUpon>Login.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Log\Register.aspx.designer.vb">
+    <Compile Include="Account\Register.aspx.designer.vb">
       <DependentUpon>Register.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Log\Register.aspx.vb">
+    <Compile Include="Account\Register.aspx.vb">
       <DependentUpon>Register.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
