@@ -11,7 +11,7 @@ Option Strict On
 Option Explicit On
 
 
-Partial Public Class dashboard1
+Partial Public Class Dashboard
     
     '''<summary>
     '''form1 control.
@@ -23,31 +23,40 @@ Partial Public Class dashboard1
     Protected WithEvents form1 As Global.System.Web.UI.HtmlControls.HtmlForm
     
     '''<summary>
-    '''ManagerPageControl control.
+    '''ASPxPageControl1 control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ManagerPageControl As Global.DevExpress.Web.ASPxPageControl
+    Protected WithEvents ASPxPageControl1 As Global.DevExpress.Web.ASPxPageControl
     
     '''<summary>
-    '''ASPxGridView1 control.
+    '''RolesGridView control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ASPxGridView1 As Global.DevExpress.Web.ASPxGridView
+    Protected WithEvents RolesGridView As Global.DevExpress.Web.ASPxGridView
     
     '''<summary>
-    '''ASPxGridView2 control.
+    '''UsersGridView control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ASPxGridView2 As Global.DevExpress.Web.ASPxGridView
+    Protected WithEvents UsersGridView As Global.DevExpress.Web.ASPxGridView
+    
+    '''<summary>
+    '''TasksGridView control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents TasksGridView As Global.DevExpress.Web.ASPxGridView
     
     '''<summary>
     '''TaskDataSource control.
@@ -68,6 +77,24 @@ Partial Public Class dashboard1
     Protected WithEvents PriorityDataSource As Global.System.Web.UI.WebControls.SqlDataSource
     
     '''<summary>
+    '''ManagerDataSource control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents ManagerDataSource As Global.System.Web.UI.WebControls.SqlDataSource
+    
+    '''<summary>
+    '''RoleDataSource control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents RoleDataSource As Global.System.Web.UI.WebControls.SqlDataSource
+    
+    '''<summary>
     '''UserDataSource control.
     '''</summary>
     '''<remarks>
@@ -84,13 +111,4 @@ Partial Public Class dashboard1
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents StatusDataSource As Global.System.Web.UI.WebControls.SqlDataSource
-    
-    '''<summary>
-    '''RoleDataSource control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents RoleDataSource As Global.System.Web.UI.WebControls.SqlDataSource
 End Class

@@ -8,8 +8,8 @@
     <title>Dashboard</title>
 
 </head>
-<a href="Dashboard.aspx">Dashboard.aspx</a>
 <body>
+<a href="Dashboard.aspx">Dashboard.aspx</a>
     <script type="text/javascript">
         function OnGridEndCallback(s, e) {
             var errorMessage = s.cpErrorMessage;
@@ -126,6 +126,11 @@
                                             PropertiesComboBox-ValueField="StatusId"
                                             EditFormSettings-Visible="False"
                                             VisibleIndex="6" />
+                                        <dx:GridViewDataComboBoxColumn FieldName="AssignedTaskId" Caption="Assigned Task" VisibleIndex="7"
+                                           PropertiesComboBox-DataSourceID="UserDataSource"
+                                            PropertiesComboBox-TextField="Name"
+                                            PropertiesComboBox-ValueField="Id" EditFormSettings-Visible="False"/>
+
                                     </Columns>
                                 </dx:ASPxGridView>
                             </dx:ContentControl>
@@ -152,7 +157,14 @@
 
             <asp:SqlDataSource ID="UserDataSource" runat="server"
                 ConnectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TMSDB;Integrated Security=True"
-                SelectCommand="SELECT [Id],[Name],[Username],[Password],[RoleId],[ManagerId] FROM [dbo].[Users]" />
+                    DeleteCommand="DELETE FROM Roles WHERE Id = @Id"
+SelectCommand="SELECT [Id],[Name],[Username],[Password],[RoleId],[ManagerId] FROM [dbo].[Users]">
+                
+             <DeleteParameters>
+        <asp:Parameter Name="Id" Type="Int32" />
+    </DeleteParameters>
+
+            </asp:SqlDataSource>
 
             <asp:SqlDataSource ID="StatusDataSource" runat="server"
                 ConnectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TMSDB;Integrated Security=True"

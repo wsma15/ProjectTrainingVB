@@ -101,12 +101,7 @@
             <asp:SqlDataSource ID="PriorityDataSource" runat="server"
                 ConnectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TMSDB;Integrated Security=True"
                 SelectCommand="SELECT [id],[Name]  FROM [TMSDB].[dbo].[Priority]" />
-
-            <asp:SqlDataSource ID="ManagerDataSource" runat="server"
-                ConnectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TMSDB;Integrated Security=True"
-                SelectCommand="SELECT [id],[Name]  FROM [TMSDB].[dbo].[users] where Roleid = 1006" />
-
-<asp:SqlDataSource ID="UserDataSource" runat="server"
+            <asp:SqlDataSource ID="UserDataSource" runat="server"
     ConnectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TMSDB;Integrated Security=True"
     SelectCommand="SELECT U.Id, U.Name, U.RoleId, U.ManagerId, COUNT(T.Id) AS TaskCount 
                    FROM [dbo].[Users] U 

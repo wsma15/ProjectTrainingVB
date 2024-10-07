@@ -328,57 +328,51 @@ Public Class Dashboard
             e.RowError = $"{e.Errors.Last}Please fill in all fields."
         End If
     End Sub
+    Protected Sub UsersGridView_RowDeleting(sender As Object, e As DevExpress.Web.Data.ASPxDataDeletingEventArgs)
+        ' Retrieve the ID of the user to be deleted
+        Dim userId As Integer = Convert.ToInt32(e.Keys("Id"))
 
-    Protected Sub UsersGridView_RowDeleting(ByVal sender As Object, ByVal e As DevExpress.Web.Data.ASPxDataDeletingEventArgs)
-        Dim username As String = e.Keys("Username").ToString()
+        ' Define the query for deleting the user from the database
+        Dim deleteQuery As String = "DELETE FROM Users WHERE Id = @Id"
 
-        ' Check if the user is a manager of any other users
-        Dim checkManagerQuery As String = "SELECT COUNT(*) FROM [dbo].[Users] WHERE ManagerId = (SELECT Id FROM [dbo].[Users] WHERE Username = @Username)"
-        Dim isManager As Boolean = False
+        ' Perform the delete operation using ADO.NET
         Using conn As New SqlConnection(connectionString)
-            Dim cmd As New SqlCommand(checkManagerQuery, conn)
-            cmd.Parameters.AddWithValue("@Username", username)
-            conn.Open()
-            Dim count As Integer = Convert.ToInt32(cmd.ExecuteScalar())
-            isManager = (count > 0) ' If count is greater than 0, the user is a manager
-            conn.Close()
+            Using cmd As New SqlCommand(deleteQuery, conn)
+                cmd.Parameters.AddWithValue("@Id", userId)
+
+                Try
+                    conn.Open()
+                    cmd.ExecuteNonQuery()  ' Execute the delete command
+                Catch ex As Exception
+                    ' Handle any exceptions, such as foreign key constraint violations
+                    UsersGridView.JSProperties("cpErrorMessage") = ex.Message
+                Finally
+                    conn.Close()
+                End Try
+            End Using
         End Using
 
-        If isManager Then
-            ' Notify the user that the deletion cannot be performed
-            e.Cancel = True
-            ' You can also set a message to display to the user, for example:
-            UsersGridView.JSProperties("cpErrorMessage") = "Cannot delete this user because they are a manager of another user."
-        Else
-            ' Proceed with the deletion
-            Dim query As String = "DELETE FROM [dbo].[Users] WHERE Username = @Username"
-            Using conn As New SqlConnection(connectionString)
-                Dim cmd As New SqlCommand(query, conn)
-                cmd.Parameters.AddWithValue("@Username", username)
-                conn.Open()
-                cmd.ExecuteNonQuery()
-                conn.Close()
-            End Using
+        ' Prevent further processing by the grid, as the deletion has already been handled
+        e.Cancel = True
+        UsersGridView.CancelEdit()
+        Dim username As String = If(e.Keys("Id") IsNot Nothing, e.Keys("Id").ToString(), String.Empty)
 
-            e.Cancel = True
-            '     Dim rptdoc As New ReportDocument()
-            ''    rptdoc.Load(Server.MapPath("~/UsersReport.rpt"))
-            query = "SELECT [Id],[Name],[Username],[Password],[RoleId],[ManagerId] FROM [TMSDB].[dbo].[Users]"
-            Using conn As New SqlConnection(connectionString)
-                Dim cmd As New SqlCommand(query, conn)
-                Dim da As New SqlDataAdapter(cmd)
-                Dim dt As New DataTable()
-                conn.Open()
-                da.Fill(dt)
-                conn.Close()
-                For Each row As DataRow In dt.Rows
-                    Dim encryptedPassword As String = row("Password").ToString()
-                    Dim decryptedPassword As String = PasswordHelper.Decrypt(encryptedPassword)
-                    row("Password") = decryptedPassword
-                Next
-                Session("UsersDs") = dt
-            End Using
-        End If
+
+        Dim query = "SELECT [Id],[Name],[Username],[Password],[RoleId],[ManagerId] FROM [TMSDB].[dbo].[Users]"
+        Using conn As New SqlConnection(connectionString)
+            Dim cmd As New SqlCommand(query, conn)
+            Dim da As New SqlDataAdapter(cmd)
+            Dim dt As New DataTable()
+            conn.Open()
+            da.Fill(dt)
+            conn.Close()
+            For Each row As DataRow In dt.Rows
+                Dim encryptedPassword As String = row("Password").ToString()
+                Dim decryptedPassword As String = PasswordHelper.Decrypt(encryptedPassword)
+                row("Password") = decryptedPassword
+            Next
+            Session("UsersDs") = dt
+        End Using
     End Sub
 
     Protected Sub RolesGridView_RowInserting(ByVal sender As Object, ByVal e As DevExpress.Web.Data.ASPxDataInsertingEventArgs)
